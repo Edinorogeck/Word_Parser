@@ -122,6 +122,40 @@ def GetArrayMessageData_ETH(df_ETH):
             data_rows.append(data_cells)
         arrayMessageData_ETH.append(data_rows)
 
+# Функция создания файлов MKIO сообщений
+def MakeMessageCSVFiles_MKIO(arrayMessageNames_MKIO, arrayMessageAddress_MKIO, arrayMessageData_MKIO):
+    data_df = pd.DataFrame()
+    for i in range(len(arrayMessageNames_MKIO)):
+        name = arrayMessageNames_MKIO[i]
+        data_df.at[0, 0] = arrayMessageNames_MKIO[i]
+        data_df.at[1, 0] = arrayMessageAddress_MKIO[i]
+        for i, data in enumerate(arrayMessageData_MKIO[i]):
+            if data[0] == "":
+                continue
+            if data[1] == "":
+                continue
+            data_df.at[i + 2, 0] = data[0]
+            data_df.at[i + 2, 1] = data[1]
+        data_df.to_csv(f'{name}.csv', encoding='windows-1251', index=False, sep=';')
+
+# Функция создания файлов ETH сообщений
+def MakeMessageCSVFiles_ETH(arrayMessageNames_ETH, arrayMessageAddress_ETH, arrayMessageData_ETH):
+    data_df = pd.DataFrame()
+    for i in range(len(arrayMessageNames_ETH)):
+        name = arrayMessageNames_ETH[i]
+        data_df.at[0, 0] = arrayMessageNames_ETH[i]
+        mesageAddress = arrayMessageAddress_ETH[i]
+        data_df.at[1, 0] = mesageAddress[0]
+        data_df.at[1, 1] = mesageAddress[1]
+        for i, data in enumerate(arrayMessageData_ETH[i]):
+            if data[0] == "":
+                continue
+            if data[1] == "":
+                continue
+            data_df.at[i + 2, 0] = data[0]
+            data_df.at[i + 2, 1] = data[1]
+        data_df.to_csv(f'{name}.csv', encoding='windows-1251', index=False, sep=';')
+
 
 
 
@@ -192,59 +226,15 @@ GetArrayMessageData_MKIO(df_MKIO)
 GetArrayMessageData_ETH(df_ETH)
 
 
-print("---------------------------------------------------------")
 
-
-#print(arrayMessageAddress_MKIO)
-#print(arrayMessageAddress_ETH)
-
-
-print("---------------------------------------------------------")
-
-
-#print(arrayMessageNames_MKIO)
-#print(arrayMessageNames_ETH)
-
-
-print("---------------------------------------------------------")
+MakeMessageCSVFiles_MKIO(arrayMessageNames_MKIO, arrayMessageAddress_MKIO, arrayMessageData_MKIO)
+MakeMessageCSVFiles_ETH(arrayMessageNames_ETH, arrayMessageAddress_ETH, arrayMessageData_ETH)
 
 
 
 
 
-'''''
-for i in range(len(df_MKIO)):
-    data = []
-    data.append(arrayMessageNames_MKIO[i])
-    data.append(arrayMessageAddress_MKIO[i])
-    data.append(arrayMessageData_MKIO[i])
-    df_Total_MKIO.append(data)
-
-
-for i in range(len(df_ETH)):
-    data = []
-    data.append(arrayMessageNames_ETH[i])
-    data.append(arrayMessageAddress_ETH[i])
-    data.append(arrayMessageData_ETH[i])
-    df_Total_ETH.append(data)
-'''''
-
-
-
-
-
-#print(arrayMessageData_MKIO)
-
-
-print("---------------------------------------------------------")
-
-
-print(df_Total_MKIO)
-print(df_Total_ETH)
-
-
-
-
+'''
 
 # Сохраняем DataFrame в CSV-файл
 for i, table in enumerate(df_MKIO):
@@ -252,12 +242,5 @@ for i, table in enumerate(df_MKIO):
 
 for i, table in enumerate(df_ETH):
     table.to_csv(f'ETH_table_{i+1}.csv', encoding='windows-1251', index=False, sep=';')
-
-
-'''''
-for i, table in enumerate(df_Total_MKIO):
-    table.to_csv(f'Total_MKIO_table_{i+1}.csv', encoding='windows-1251', index=False, sep=';')
-
-for i, table in enumerate(df_Total_ETH):
-    table.to_csv(f'Total_ETH_table_{i+1}.csv', encoding='windows-1251', index=False, sep=';')
-'''''
+    
+'''
