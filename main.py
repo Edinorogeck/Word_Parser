@@ -1,5 +1,6 @@
 import docx
 import pandas as pd
+import os
 
 
 # GLOBALS PARAMETRS
@@ -28,12 +29,14 @@ def Check_MKIO(text):
         if "МКИО." in word:
             return True
 
+
 # Функция проверки на вхождение подстроки "Eth."
 def Check_ETH(text):
     words = text.split()
     for word in words:
         if "Eth." in word:
             return True
+
 
 # Функция возвращает название сообщения
 def GetMessageName(text):
@@ -43,6 +46,7 @@ def GetMessageName(text):
             return word
         if "МКИО." in word:
             return word
+
 
 # Функция создания списка имен сообщений МКИО
 def GetArrayMessageNames_MKIO(df_MKIO):
@@ -64,6 +68,7 @@ def GetArrayMessageNames_MKIO(df_MKIO):
                 arrayMessageNames_MKIO.append(messageName)
                 break
 
+
 # Функция создания списка имен сообщений ETH
 def GetArrayMessageNames_ETH(df_ETH):
     # Алгоритм создания списка имен сообщений Ethernet
@@ -84,11 +89,13 @@ def GetArrayMessageNames_ETH(df_ETH):
                 arrayMessageNames_ETH.append(messageName)
                 break
 
+
 # Функция создания списка адресов сообщений МКИО
 def GetArrayMessageAddress_MKIO(df_MKIO):
     # Алгоритм создания списка имен сообщений МКИО
     for i, table_MKIO in enumerate(df_MKIO):
         arrayMessageAddress_MKIO.append(table_MKIO.loc[1, 2].split(None, 1)[0])
+
 
 # Функция создания списка адресов сообщений ETH
 def GetArrayMessageAddress_ETH(df_ETH):
@@ -99,6 +106,7 @@ def GetArrayMessageAddress_ETH(df_ETH):
         addressData.append(text.split()[0])
         addressData.append(text.split()[1])
         arrayMessageAddress_ETH.append(addressData)
+
 
 # Функция создания массива с полезными данными ETH сообщений
 def GetArrayMessageData_MKIO(df_MKIO):
@@ -111,6 +119,7 @@ def GetArrayMessageData_MKIO(df_MKIO):
             data_rows.append(data_cells)
         arrayMessageData_MKIO.append(data_rows)
 
+
 # Функция создания массива с полезными данными ETH сообщений
 def GetArrayMessageData_ETH(df_ETH):
     for i, table_ETH in enumerate(df_ETH):
@@ -122,8 +131,9 @@ def GetArrayMessageData_ETH(df_ETH):
             data_rows.append(data_cells)
         arrayMessageData_ETH.append(data_rows)
 
+
 # Функция создания файлов MKIO сообщений
-def MakeMessageCSVFiles_MKIO(arrayMessageNames_MKIO, arrayMessageAddress_MKIO, arrayMessageData_MKIO):
+def MakeMessageCSVFiles_MKIO(arrayMessageNames_MKIO, arrayMessageAddress_MKIO, arrayMessageData_MKIO, folder_name):
     data_df = pd.DataFrame()
     for i in range(len(arrayMessageNames_MKIO)):
         name = arrayMessageNames_MKIO[i]
@@ -136,10 +146,11 @@ def MakeMessageCSVFiles_MKIO(arrayMessageNames_MKIO, arrayMessageAddress_MKIO, a
                 continue
             data_df.at[i + 2, 0] = data[0]
             data_df.at[i + 2, 1] = data[1]
-        data_df.to_csv(f'{name}.csv', encoding='windows-1251', index=False, sep=';')
+        data_df.to_csv(f'{folder_name}/{name}.csv', encoding='windows-1251', index=False, sep=';')
+
 
 # Функция создания файлов ETH сообщений
-def MakeMessageCSVFiles_ETH(arrayMessageNames_ETH, arrayMessageAddress_ETH, arrayMessageData_ETH):
+def MakeMessageCSVFiles_ETH(arrayMessageNames_ETH, arrayMessageAddress_ETH, arrayMessageData_ETH, folder_name):
     data_df = pd.DataFrame()
     for i in range(len(arrayMessageNames_ETH)):
         name = arrayMessageNames_ETH[i]
@@ -154,7 +165,7 @@ def MakeMessageCSVFiles_ETH(arrayMessageNames_ETH, arrayMessageAddress_ETH, arra
                 continue
             data_df.at[i + 2, 0] = data[0]
             data_df.at[i + 2, 1] = data[1]
-        data_df.to_csv(f'{name}.csv', encoding='windows-1251', index=False, sep=';')
+        data_df.to_csv(f'{folder_name}/{name}.csv', encoding='windows-1251', index=False, sep=';')
 
 
 
@@ -163,7 +174,6 @@ def MakeMessageCSVFiles_ETH(arrayMessageNames_ETH, arrayMessageAddress_ETH, arra
 
 # Открываем файл формата .docx
 doc = docx.Document(input('Введите путь к файлу: '))
-
 
 # Массив для DataFrame pandas
 df = []
@@ -180,7 +190,6 @@ for i, table in enumerate(doc.tables):
         data_row.append(data_cell)
     # Добавляем таблицу(двуменрный массив) в массив для DataFrame pandas
     df.append(pd.DataFrame(data_row))
-
 
 # Флаги для МКИО и Eth
 flag_MKIO = False
@@ -214,22 +223,39 @@ for i, table in enumerate(df):
 
 
 
+
+folder_name = 'Configuration folder'
+if not os.path.exists(folder_name):
+    os.mkdir(folder_name)
+
+
+
+
+
+
+
+
 GetArrayMessageNames_MKIO(df_MKIO)
 GetArrayMessageNames_ETH(df_ETH)
-
 
 GetArrayMessageAddress_MKIO(df_MKIO)
 GetArrayMessageAddress_ETH(df_ETH)
 
-
 GetArrayMessageData_MKIO(df_MKIO)
 GetArrayMessageData_ETH(df_ETH)
 
+MakeMessageCSVFiles_MKIO(arrayMessageNames_MKIO, arrayMessageAddress_MKIO, arrayMessageData_MKIO, folder_name)
+MakeMessageCSVFiles_ETH(arrayMessageNames_ETH, arrayMessageAddress_ETH, arrayMessageData_ETH, folder_name)
 
 
-MakeMessageCSVFiles_MKIO(arrayMessageNames_MKIO, arrayMessageAddress_MKIO, arrayMessageData_MKIO)
-MakeMessageCSVFiles_ETH(arrayMessageNames_ETH, arrayMessageAddress_ETH, arrayMessageData_ETH)
 
+file_path = f'{folder_name}/Configuration_file.txt'
+
+with open(file_path, 'w') as file:
+    for name in arrayMessageNames_MKIO:
+        file.write(f'{name}.csv\n')
+    for name in arrayMessageNames_ETH:
+        file.write(f'{name}.csv\n')
 
 
 
@@ -242,5 +268,5 @@ for i, table in enumerate(df_MKIO):
 
 for i, table in enumerate(df_ETH):
     table.to_csv(f'ETH_table_{i+1}.csv', encoding='windows-1251', index=False, sep=';')
-    
+
 '''
