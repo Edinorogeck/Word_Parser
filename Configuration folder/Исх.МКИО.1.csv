@@ -1,0 +1,14 @@
+0;1
+»Òı.Ã »Œ.1;
+01h;
+SCh2_TekRegim_U16;16
+SCh2_KodTechSost_U8;8
+Rezerv;8
+CV_TekVrem_U32;32
+CRC16;16
+SCh2_TrebUgMesOR8_I32;32
+SCh2_TrebAzOR9_I32;32
+SCh2_TrebUgMesOR9_I32;32
+SCh2_TrebAzOR10_I32;32
+SCh2_TrebUgMesOR10_I32;32
+CRC16;16
